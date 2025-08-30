@@ -34,12 +34,38 @@ public class UsersService {
 
 
 
-     public UsersDATA crearUsuario(UsersDATA usuario) {
+    public UsersDATA crearUsuario(UsersDATA usuario) {
         return usersRepository.save(usuario);
+    }
+   // Actualizar usuario
+    public UsersDATA actualizarUsuario(UsersDATA usuario) {
+        if (usuario.getId() == null || usuario.getId().isEmpty()) {
+            throw new IllegalArgumentException("El id no puede ser null para actualizar");
+        }
+
+        // Busca si existe el usuario
+        UsersDATA existente = usersRepository.findById(usuario.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario con id " + usuario.getId() + " no existe"));
+
+     
+        existente.setUserName(usuario.getUserName());
+        existente.setclvPass(usuario.getclvPass());
+        existente.setemailUser(usuario.getemailUser());
+        existente.setNombres(usuario.getNombres());
+        existente.setaPaterno(usuario.getaPaterno());
+        existente.setaMaterno(usuario.getaMaterno());
+
+        return usersRepository.save(existente);
     }
 
     public List<UsersDATA> listarUsuarios() {
         return usersRepository.findAll();
     }
+  public void eliminarUsuario(String id) {
+    UsersDATA usuario = usersRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Usuario con id " + id + " no existe"));
+    usersRepository.delete(usuario);
+}
+
 }
     
