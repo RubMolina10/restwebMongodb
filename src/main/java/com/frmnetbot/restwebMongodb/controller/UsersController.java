@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -61,7 +62,14 @@ public class UsersController {
         usersService.eliminarUsuario(id);
         return "Usuario con id " + id + " eliminado correctamente";
     }
-
+    
+    @GetMapping("/me")
+    public UsersDATA getCurrentUser(@RequestHeader("Authorization") String authHeader) {
+    String token = authHeader.replace("Bearer ", "");
+    String username = jwtUtil.extractUsername(token);
+    return repository.findByUserName(username).orElse(null);
+    }
+  
     // LOGIN con JWT
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody Map<String, String> loginData) {
@@ -95,7 +103,7 @@ public class UsersController {
     }
 
     // Obtener todos los usuarios
-    @GetMapping
+    @GetMapping("listar")
     public List<UsersDATA> listarUsuarios() {
         return usersService.listarUsuarios();
     }
